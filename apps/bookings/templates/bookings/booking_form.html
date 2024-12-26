@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Создание бронирования</h2>
+    <p>Выбранная комната: {{ room.room_number }}</p>
+    <p>Дата заезда: {{ check_in_date }}</p>
+    <p>Дата выезда: {{ check_out_date }}</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Забронировать</button>
+    </form>
+</div>
+{% endblock %}

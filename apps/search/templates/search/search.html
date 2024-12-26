@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Результаты поиска{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Результаты поиска</h2>
+
+    <!-- Форма поиска -->
+        <form method="get" action="{% url 'search' %}" class="mb-4">
+        <div class="mb-3">
+            <label for="room_type" class="form-label">Тип комнаты</label>
+            <input type="text" name="room_type" class="form-control" placeholder="Например, одноместная" value="{{ request.GET.room_type }}">
+        </div>
+        <div class="mb-3">
+            <label for="room_number" class="form-label">Номер комнаты</label>
+            <input type="text" name="room_number" class="form-control" placeholder="Введите номер комнаты" value="{{ request.GET.room_number }}">
+        </div>
+        <div class="mb-3">
+            <label for="min_price" class="form-label">Минимальная цена</label>
+            <input type="number" name="min_price" class="form-control" placeholder="Например, 1000" value="{{ request.GET.min_price }}">
+        </div>
+        <div class="mb-3">
+            <label for="max_price" class="form-label">Максимальная цена</label>
+            <input type="number" name="max_price" class="form-control" placeholder="Например, 5000" value="{{ request.GET.max_price }}">
+        </div>
+        <div class="mb-3">
+            <label for="is_available" class="form-label">Доступность</label>
+            <select name="is_available" class="form-select">
+                <option value="">Любой</option>
+                <option value="true" {% if request.GET.is_available == 'true' %}selected{% endif %}>Доступна</option>
+                <option value="false" {% if request.GET.is_available == 'false' %}selected{% endif %}>Занята</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Искать</button>
+    </form>
+
+
+    {% if query %}
+        <p>Вы искали: <strong>{{ query }}</strong></p>
+
+        <h3>Комнаты:</h3>
+        {% if rooms %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Номер</th>
+                        <th>Тип</th>
+                        <th>Цена</th>
+                        <th>Доступность</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for room in rooms %}
+                    <tr>
+                        <td>{{ room.room_number }}</td>
+                        <td>{{ room.room_type }}</td>
+                        <td>${{ room.price }}</td>
+                        <td>{% if room.is_available %}Доступна{% else %}Занята{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Нет комнат, соответствующих вашему запросу.</p>
+        {% endif %}
+    {% else %}
+        <p>Введите запрос для поиска.</p>
+    {% endif %}
+</div>
+{% endblock %}

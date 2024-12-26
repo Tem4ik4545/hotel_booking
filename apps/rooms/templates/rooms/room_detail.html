@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ room.name }}</title>
+</head>
+<body>
+    <h1>{{ room.name }}</h1>
+    <p>{{ room.description }}</p>
+    <p>Price per night: {{ room.price }}</p>
+    <a href="{% url 'book_room' room.id %}">Book this room</a>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!-- templates/hotels/hotel_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}Поиск отелей{% endblock %}
+
+{% block content %}
+<h2 class="text-center">Поиск отелей</h2>
+
+<form method="get" class="mb-4">
+    <div class="mb-3">
+        <label for="name" class="form-label">Название отеля</label>
+        <input type="text" name="name" class="form-control" placeholder="Введите название" value="{{ request.GET.name }}">
+    </div>
+    <div class="mb-3">
+        <label for="location" class="form-label">Местоположение</label>
+        <input type="text" name="location" class="form-control" placeholder="Введите местоположение" value="{{ request.GET.location }}">
+    </div>
+    <div class="mb-3">
+        <label for="min_rating" class="form-label">Минимальный рейтинг</label>
+        <input type="number" name="min_rating" class="form-control" step="0.1" placeholder="Например, 4.5" value="{{ request.GET.min_rating }}">
+    </div>
+    <button type="submit" class="btn btn-primary">Искать</button>
+</form>
+
+<h3>Результаты:</h3>
+{% if hotels %}
+    <div class="row">
+        {% for hotel in hotels %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    {% if hotel.image %}
+                        <img src="{{ hotel.image.url }}" class="card-img-top" alt="{{ hotel.name }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ hotel.name }}</h5>
+                        <p class="card-text">{{ hotel.description|truncatechars:100 }}</p>
+                        <p><strong>Местоположение:</strong> {{ hotel.location }}</p>
+                        <p><strong>Рейтинг:</strong> {{ hotel.rating }}</p>
+                        <a href="{% url 'hotels:hotel_detail' hotel.id %}" class="btn btn-primary">Детали</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>Нет отелей, соответствующих вашему запросу.</p>
+{% endif %}
+{% endblock %}

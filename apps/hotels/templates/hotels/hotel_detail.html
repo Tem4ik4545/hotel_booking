@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ hotel.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">{{ hotel.name }}</h2>
+    <p class="text-center">{{ hotel.description }}</p>
+    <p><strong>Местоположение:</strong> {{ hotel.location }}</p>
+    <p><strong>Рейтинг:</strong> {{ hotel.rating|floatformat:2 }}</p>
+
+    <h3 class="mt-4">Поиск доступных комнат:</h3>
+    <form method="get" class="mb-4">
+        <div class="mb-3">
+            <label for="room_type" class="form-label">Тип комнаты</label>
+            <select name="room_type" class="form-control">
+                <option value="">Выберите тип</option>
+                {% for choice in room_type_choices %}
+                <option value="{{ choice.0 }}" {% if request.GET.room_type == choice.0 %}selected{% endif %}>
+                    {{ choice.1 }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="check_in_date" class="form-label">Дата заезда</label>
+            <input type="date" name="check_in_date" class="form-control" value="{{ request.GET.check_in_date }}">
+        </div>
+        <div class="mb-3">
+            <label for="check_out_date" class="form-label">Дата выезда</label>
+            <input type="date" name="check_out_date" class="form-control" value="{{ request.GET.check_out_date }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Искать</button>
+    </form>
+
+    {% if rooms %}
+    <h3 class="mt-4">Доступные комнаты:</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Номер</th>
+                <th>Тип</th>
+                <th>Цена</th>
+                <th>Доступность</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for room in rooms %}
+            <tr>
+                <td>{{ room.room_number }}</td>
+                <td>{{ room.get_room_type_display }}</td>
+                <td>{{ room.price }}</td>
+                <td>
+                    <button class="btn btn-info btn-sm toggle-calendar" data-room-id="{{ room.id }}">Показать календарь</button>
+                </td>
+                <td>
+                    {% if check_in_date and check_out_date %}
+                    <a href="{% url 'bookings:booking_create' room.id %}?check_in_date={{ check_in_date }}&check_out_date={{ check_out_date }}"
+                        class="btn btn-primary">
+                        Забронировать
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% elif request.GET.room_type or request.GET.check_in_date or request.GET.check_out_date %}
+    <p class="text-center mt-4">Нет доступных комнат на выбранные параметры.</p>
+    {% endif %}
+
+    <!-- Календарь -->
+    <div id="calendar-container" style="display: none;" class="mt-4">
+        <h4>Календарь бронирования</h4>
+        <button class="btn btn-secondary mb-3" id="close-calendar">Закрыть календарь</button>
+        <div id="calendar"></div>
+        <button class="btn btn-danger mt-3" id="clear-dates" style="display: none;">Очистить даты</button>
+        <button class="btn btn-success mt-3" id="confirm-booking" style="display: none;">Забронировать</button>
+    </div>
+</div>
+
+<script>
+    const roomBookings = {{ room_bookings|safe }};
+    let selectedCheckInDate = null;
+    let selectedCheckOutDate = null;
+    let selectedRoomId = null;
+
+    document.querySelectorAll('.toggle-calendar').forEach(button => {
+        button.addEventListener('click', function () {
+            selectedRoomId = this.dataset.roomId;
+            const bookings = roomBookings[selectedRoomId] || [];
+
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = ''; // Очистка предыдущего календаря
+
+            const dates = new Set();
+            bookings.forEach(booking => {
+                let start = new Date(booking.start);
+                const end = new Date(booking.end);
+
+                while (start <= end) {
+                    dates.add(start.toISOString().split('T')[0]);
+                    start.setDate(start.getDate() + 1);
+                }
+            });
+
+            // Генерация календаря
+            for (let i = 0; i < 31; i++) {
+                const today = new Date();
+                const current = new Date(today.getFullYear(), today.getMonth(), i + 1);
+                const formatted = current.toISOString().split('T')[0];
+
+                const dateEl = document.createElement('div');
+                dateEl.innerText = formatted;
+                dateEl.style.padding = "10px";
+                dateEl.style.border = "1px solid #ccc";
+                dateEl.style.textAlign = "center";
+                dateEl.style.borderRadius = "4px";
+                dateEl.style.cursor = "pointer";
+                dateEl.style.margin = "5px";
+
+                if (dates.has(formatted)) {
+                    dateEl.style.backgroundColor = "red";
+                    dateEl.style.color = "white";
+                } else {
+                    dateEl.style.backgroundColor = "green";
+                    dateEl.style.color = "white";
+                    dateEl.addEventListener('click', function () {
+                        if (!selectedCheckInDate) {
+                            selectedCheckInDate = formatted;
+                            this.style.border = "2px solid blue";
+                        } else if (!selectedCheckOutDate) {
+                            selectedCheckOutDate = formatted;
+                            this.style.border = "2px solid blue";
+                            document.getElementById('confirm-booking').style.display = 'block';
+                            document.getElementById('clear-dates').style.display = 'block';
+                        }
+                    });
+                }
+
+                calendar.appendChild(dateEl);
+            }
+
+            document.getElementById('calendar-container').style.display = 'block';
+        });
+    });
+
+    document.getElementById('close-calendar').addEventListener('click', function () {
+        document.getElementById('calendar-container').style.display = 'none';
+    });
+
+    document.getElementById('clear-dates').addEventListener('click', function () {
+        selectedCheckInDate = null;
+        selectedCheckOutDate = null;
+        document.querySelectorAll('#calendar div').forEach(el => el.style.border = "1px solid #ccc");
+        this.style.display = 'none';
+        document.getElementById('confirm-booking').style.display = 'none';
+    });
+
+    document.getElementById('confirm-booking').addEventListener('click', function () {
+        if (selectedCheckInDate && selectedCheckOutDate && selectedRoomId) {
+            const url = `{% url 'bookings:booking_create' 0 %}`.replace('0', selectedRoomId) +
+                `?check_in_date=${selectedCheckInDate}&check_out_date=${selectedCheckOutDate}`;
+            window.location.href = url;
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Результаты поиска{% endblock %}
+
+{% block content %}
+<h2 class="text-center">Результаты поиска</h2>
+
+{% if query %}
+    <p>Вы искали: <strong>{{ query }}</strong></p>
+
+    <h3>Комнаты:</h3>
+    {% if rooms %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Номер</th>
+                    <th>Тип</th>
+                    <th>Цена</th>
+                    <th>Доступность</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for room in rooms %}
+                <tr>
+                    <td>{{ room.room_number }}</td>
+                    <td>{{ room.room_type }}</td>
+                    <td>${{ room.price }}</td>
+                    <td>{% if room.is_available %}Доступна{% else %}Занята{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Нет комнат, соответствующих вашему запросу.</p>
+    {% endif %}
+
+    <h3>Бронирования:</h3>
+    {% if bookings %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Номер комнаты</th>
+                    <th>Дата заезда</th>
+                    <th>Дата выезда</th>
+                    <th>Гости</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.room.room_number }}</td>
+                    <td>{{ booking.check_in_date }}</td>
+                    <td>{{ booking.check_out_date }}</td>
+                    <td>{{ booking.guests }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Нет бронирований, соответствующих вашему запросу.</p>
+    {% endif %}
+{% else %}
+    <p>Введите запрос для поиска.</p>
+{% endif %}
+{% endblock %}

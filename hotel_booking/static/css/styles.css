@@ -1,0 +1,179 @@
+/* Общие стили */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Светлый фон */
+    margin: 0;
+    padding: 0;
+
+    /* Адаптивное масштабирование */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    overflow-x: hidden; /* Убираем горизонтальный скролл */
+}
+
+/* Настройка Viewport */
+html {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* Адаптация контейнеров */
+.container {
+    margin-top: 20px; /* Отступ сверху */
+    margin-bottom: 20px; /* Отступ снизу */
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Шапка навигации */
+.navbar {
+    padding: 10px 15px;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.3rem; /* Чуть меньше на мобильных устройствах */
+}
+
+/* Сообщения */
+.alert {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Стили для футера */
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.8rem; /* Уменьшаем размер шрифта для мобильных */
+}
+
+/* Адаптация таблиц */
+table {
+    width: 100%;
+    display: block;
+    overflow-x: auto; /* Добавляем скролл для таблиц на малых экранах */
+}
+
+/* Кнопки */
+.btn {
+    font-size: 1rem;
+    padding: 10px 15px;
+}
+
+/* Поля ввода */
+input[type="text"],
+input[type="date"],
+input[type="number"],
+textarea,
+select {
+    font-size: 1rem;
+    padding: 8px 12px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Стиль для календаря */
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Ячейки календаря */
+.date {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem; /* Немного уменьшенный размер */
+}
+
+/* Hover-эффект для дат */
+.date:hover {
+    background-color: #ddd;
+}
+
+/* Стили для забронированных и доступных дат */
+.date.booked-date {
+    background-color: red !important;
+    color: white !important;
+}
+
+.date.available-date {
+    background-color: green !important;
+    color: white !important;
+}
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 768px) {
+    /* Уменьшаем размеры шрифта */
+    body {
+        font-size: 14px;
+    }
+
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+
+    .btn {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+
+    /* Делаем календарь компактным */
+    #calendar {
+        grid-template-columns: repeat(7, 1fr); /* По-прежнему 7 колонок */
+        gap: 5px;
+    }
+
+    .date {
+        padding: 6px; /* Уменьшаем размер ячеек */
+        font-size: 0.8rem;
+    }
+
+    /* Таблицы прокручиваемые */
+    table {
+        font-size: 0.9rem;
+    }
+
+    th, td {
+        padding: 5px;
+    }
+}
+
+/* Ещё меньшие экраны (до 576px) */
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1rem;
+    }
+
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .btn {
+        font-size: 0.8rem;
+    }
+
+    .date {
+        padding: 5px;
+        font-size: 0.7rem;
+    }
+}

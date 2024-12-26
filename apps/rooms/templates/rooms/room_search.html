@@ -1,0 +1,25 @@
+<form method="get">
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Поиск</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Номер</th>
+            <th>Тип</th>
+            <th>Цена</th>
+            <th>Доступность</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for room in rooms %}
+        <tr>
+            <td>{{ room.room_number }}</td>
+            <td>{{ room.room_type }}</td>
+            <td>{{ room.price }}</td>
+            <td>{{ room.is_available }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

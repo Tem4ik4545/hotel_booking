@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h1>Добро пожаловать в систему бронирования отелей!</h1>
+    <p>Выберите отель или воспользуйтесь поиском для начала бронирования.</p>
+    <a href="{% url 'hotels:hotel_list' %}" class="btn btn-primary">Просмотреть отели</a>
+</div>
+{% endblock %}

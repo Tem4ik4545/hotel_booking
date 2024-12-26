@@ -1,0 +1,39 @@
+<!-- apps/bookings/templates/bookings/booking_create.html -->
+{% extends 'base.html' %}
+
+{% block title %}Подтверждение бронирования{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Бронирование комнаты №{{ room.room_number }}</h2>
+    <p><strong>Тип комнаты:</strong> {{ room.get_room_type_display }}</p>
+    <p><strong>Цена за ночь:</strong> {{ room.price }} руб.</p>
+
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <input type="hidden" name="check_in_date" value="{{ check_in_date }}">
+        <input type="hidden" name="check_out_date" value="{{ check_out_date }}">
+
+        <div class="form-group mb-3">
+            <label for="guest_count" class="form-label">Количество гостей</label>
+            <input type="number" name="guest_count" id="guest_count" class="form-control" min="1" max="{{ room.max_guests }}" value="1" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="phone_number" class="form-label">Номер телефона для связи</label>
+            <input type="text" name="phone_number" id="phone_number" class="form-control" placeholder="+7 (XXX) XXX-XX-XX" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="additional_requests" class="form-label">Дополнительные пожелания</label>
+            <textarea name="additional_requests" id="additional_requests" class="form-control" rows="4" placeholder="Введите ваши пожелания..."></textarea>
+        </div>
+
+        <p><strong>Дата заезда:</strong> {{ check_in_date }}</p>
+        <p><strong>Дата выезда:</strong> {{ check_out_date }}</p>
+
+        <button type="submit" class="btn btn-success">Подтвердить бронирование</button>
+        <a href="{% url 'hotels:hotel_detail' room.hotel.id %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}
